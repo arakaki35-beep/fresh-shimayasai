@@ -33,28 +33,51 @@
     </footer>
     
     <script>
-    // テスト用の野菜データ
-    const testData = [
-        { name: 'ゴーヤー', price: 150 },
-        { name: '島人参', price: 200 },
-        { name: 'シークワーサー', price: 300 }
-    ];
+    // APIからデータを取得してグラフを作成
+    async function fetchAndCreateChart() {
+        try {
+            console.log('APIからデータを取得中...');
+            
+            // APIからデータを取得
+            const response = await fetch('https://fresh-shimayasai-api.onrender.com/api/vegetables');
+            const result = await response.json();
+            
+            console.log('API レスポンス:', result);
+            
+            if (result.status === 'success') {
+                createChart(result.data);
+                console.log('グラフ作成完了！');
+            } else {
+                console.error('APIエラー:', result);
+            }
+            
+        } catch (error) {
+            console.error('fetch エラー:', error);
+            // エラー時はテストデータでグラフを表示
+            const testData = [
+                { name: 'ゴーヤー', price: 150 },
+                { name: '島人参', price: 200 },
+                { name: 'シークワーサー', price: 300 }
+            ];
+            createChart(testData);
+        }
+    }
 
-    // Chart.jsでグラフを作成
+    // Chart.jsでグラフを作成（前回と同じ）
     function createChart(data) {
         const ctx = document.getElementById('vegetableChart').getContext('2d');
         
         new Chart(ctx, {
-            type: 'bar', // 棒グラフ
+            type: 'bar',
             data: {
-                labels: data.map(item => item.name), // ['ゴーヤー', '島人参', 'シークワーサー']
+                labels: data.map(item => item.name),
                 datasets: [{
                     label: '価格（円/kg）',
-                    data: data.map(item => item.price), // [150, 200, 300]
+                    data: data.map(item => item.price),
                     backgroundColor: [
-                        'rgba(75, 192, 192, 0.6)',   // 青緑
-                        'rgba(255, 159, 64, 0.6)',   // オレンジ
-                        'rgba(153, 102, 255, 0.6)'   // 紫
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(255, 159, 64, 0.6)',
+                        'rgba(153, 102, 255, 0.6)'
                     ],
                     borderColor: [
                         'rgba(75, 192, 192, 1)',
@@ -91,9 +114,9 @@
         });
     }
 
-    // ページ読み込み後にグラフを表示
+    // ページ読み込み後にAPI呼び出し
     document.addEventListener('DOMContentLoaded', function() {
-        createChart(testData);
+        fetchAndCreateChart();
     });
     </script>
 </body>
