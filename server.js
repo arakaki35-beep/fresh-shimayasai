@@ -170,7 +170,7 @@ cron.schedule('0 9 * * *', async () => {
 // server.js に追加するコード
 
 const xlsx = require('xlsx');
-const axios = require('axios');
+// const axios = require('axios');
 const cron = require('node-cron');
 
 // 沖縄県から野菜価格データを自動取得する関数
