@@ -280,3 +280,49 @@ app.listen(port, () => {
     console.log('毎日午前9時に自動実行されます');
     console.log('手動実行: GET /api/update-vegetables');
 });
+
+app.get('/api/vegetables-history', async (req, res) => {
+    try {
+        // 過去30日間のデータを取得
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        
+        const { data, error } = await supabase
+            .from('vege_data')
+            .select('date, name, price')
+            .gte('date', thirtyDaysAgo.toISOString().split('T')[0])
+            .order('date', { ascending: true })
+            .order('name');
+        
+        if (error) throw error;
+        
+        // データを野菜ごとにグループ化
+        const groupedData = {};
+        const allDates = [...new Set(data.map(item => item.date))].sort();
+        
+        data.forEach(item => {
+            if (!groupedData[item.name]) {
+                groupedData[item.name] = [];
+            }
+            groupedData[item.name].push({
+                date: item.date,
+                price: item.price
+            });
+        });
+        
+        res.json({
+            status: 'success',
+            data: groupedData,
+            dates: allDates,
+            vegetables: Object.keys(groupedData)
+        });
+        
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Failed to fetch vegetables history',
+            error: error.message
+        });
+    }
+});
