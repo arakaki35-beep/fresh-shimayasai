@@ -14,10 +14,10 @@
 </head>
 <body>
     <header>
-        <h1>沖縄青果市況</h1>
+        <h1>沖縄県　中央卸売市場　野菜市況</h1>
     </header>
     <div class="container,market">
-        <h3>市況情報</h3>
+        
         <div class="chart">
             <canvas id="vegetableChart" width="400" height="200"></canvas>
         </div>
@@ -72,8 +72,8 @@
         // 野菜名のリスト（アルファベット順に並べる）
         const vegetables = Object.keys(groupedData).sort();
         
-        // 主要野菜のみ表示（グラフが見やすくなるよう）
-        const mainVegetables = vegetables.slice(0, 8); // 最初の8種類のみ
+        // 主要野菜のみ表示（グラフが見やすくなるよう）　←全部表示に変えてみる
+        const mainVegetables = vegetables; // 最初の8種類のみ
         
         // datasets配列を動的生成
         const datasets = mainVegetables.map((vegetableName, index) => {
