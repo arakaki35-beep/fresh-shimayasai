@@ -263,7 +263,7 @@ app.get('/api/update-vegetables', async (req, res) => {
     }
 });
 
-// スケジュール実行（毎日朝9時）
+// スケジュール実行（毎日12時）
 cron.schedule('0 12 * * *', async () => {
     console.log('=== 定期実行: 野菜価格データ更新 ===');
     await fetchVegetableData();

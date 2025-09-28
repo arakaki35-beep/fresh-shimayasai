@@ -14,15 +14,12 @@
     
     <style>
         header{
-            background-color: #4fc718;
+            background-color: #3d9b11;
             color: white;
+            padding: 10px;
         }
 
-        body{
-            background-color: #d7ffd3;
-        }
-
-        .vegetable-selector {
+         .vegetable-selector {
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 8px;
@@ -160,7 +157,16 @@
             font-size: 0.9rem;
             color: #6c757d;
         }
-        
+               
+        footer {
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            background: #2769a0;
+            color: white;
+            padding: 30px;
+        }
+
         @media (max-width: 768px) {
             .checkbox-grid {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -184,10 +190,6 @@
                 gap: 5px;
                 text-align: center;
             }
-        }
-        footer{
-            background-color: #0c56c5;
-            color:white;
         }
     </style>
 </head>
@@ -259,8 +261,7 @@
     </div>
     
     <footer class="mt-5">
-        <p>制作：砂川商店合同会社</p>
-        <p>TEL：098-850-5735</p>
+        <p>提供：砂川商店合同会社<br>TEL：098-850-5735</p>
     </footer>
     
     <script>
