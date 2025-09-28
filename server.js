@@ -98,7 +98,7 @@ app.get('/api/vegetables/:name', async (req, res) => {
             .select('date, price, name')
             .eq('name', vegetableName)
             .order('date', { ascending: false })
-            .limit(30);
+            .limit(7);
 
         if (error) throw error;
 
@@ -264,7 +264,7 @@ app.get('/api/update-vegetables', async (req, res) => {
 });
 
 // スケジュール実行（毎日朝9時）
-cron.schedule('0 9 * * *', async () => {
+cron.schedule('0 12 * * *', async () => {
     console.log('=== 定期実行: 野菜価格データ更新 ===');
     await fetchVegetableData();
 }, {
@@ -277,7 +277,7 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
     console.log('Supabase URL:', supabaseUrl ? 'Set' : 'Not set');
     console.log('野菜価格自動更新システムが起動しました');
-    console.log('毎日午前9時に自動実行されます');
+    console.log('毎日午前12時に自動実行されます');
     console.log('手動実行: GET /api/update-vegetables');
 });
 

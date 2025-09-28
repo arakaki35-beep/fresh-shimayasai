@@ -22,7 +22,7 @@
             <canvas id="vegetableChart" width="400" height="200"></canvas>
         </div>
         <p>引用：<span><a href="https://www.pref.okinawa.lg.jp/shigoto/shinkooroshi/1011552/1024140/1024142.html">沖縄県</a></span>
-            <br>●月●日 午前9時時点の情報</p>
+            <br>●月●日の情報</p>
     </div>
     
     <footer>
@@ -34,166 +34,166 @@
     
     <script>
     // APIからデータを取得してグラフを作成
-    async function fetchAndCreateChart() {
-        try {
-            console.log('APIから履歴データを取得中...');
-            
-            // 履歴データ取得用のAPIを呼び出し
-            const response = await fetch('https://fresh-shimayasai-api.onrender.com/api/vegetables-history');
-            const result = await response.json();
-            
-            console.log('API レスポンス:', result);
-            
-            if (result.status === 'success') {
-                createLineChart(result.data, result.dates);
-                console.log('折れ線グラフ作成完了！');
-            } else {
-                console.error('APIエラー:', result);
+        async function fetchAndCreateChart() {
+            try {
+                console.log('APIから履歴データを取得中...');
+                
+                // 履歴データ取得用のAPIを呼び出し
+                const response = await fetch('https://fresh-shimayasai-api.onrender.com/api/vegetables-history');
+                const result = await response.json();
+                
+                console.log('API レスポンス:', result);
+                
+                if (result.status === 'success') {
+                    createLineChart(result.data, result.dates);
+                    console.log('折れ線グラフ作成完了！');
+                } else {
+                    console.error('APIエラー:', result);
+                }
+                
+            } catch (error) {
+                console.error('fetch エラー:', error);
+                // エラー時は従来の棒グラフを表示
+                fallbackToBarChart();
             }
-            
-        } catch (error) {
-            console.error('fetch エラー:', error);
-            // エラー時は従来の棒グラフを表示
-            fallbackToBarChart();
         }
-    }
 
-    // 折れ線グラフを作成
-    function createLineChart(groupedData, allDates) {
-        const ctx = document.getElementById('vegetableChart').getContext('2d');
-        
-        // カラーパレット（野菜の数だけ色を用意）
-        const colors = [
-            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-            '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
-            '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
-        ];
-        
-        // 野菜名のリスト（アルファベット順に並べる）
-        const vegetables = Object.keys(groupedData).sort();
-        
-        // 主要野菜のみ表示（グラフが見やすくなるよう）　←全部表示に変えてみる
-        const mainVegetables = vegetables; // 最初の8種類のみ
-        
-        // datasets配列を動的生成
-        const datasets = mainVegetables.map((vegetableName, index) => {
-            const vegetableData = groupedData[vegetableName];
+        // 折れ線グラフを作成
+        function createLineChart(groupedData, allDates) {
+            const ctx = document.getElementById('vegetableChart').getContext('2d');
             
-            // 各日付の価格データを取得（データがない日はnull）
-            const priceData = allDates.map(date => {
-                const found = vegetableData.find(item => item.date === date);
-                return found ? found.price : null;
+            // カラーパレット（野菜の数だけ色を用意）
+            const colors = [
+                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384',
+                '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+            ];
+            
+            // 野菜名のリスト（アルファベット順に並べる）
+            const vegetables = Object.keys(groupedData).sort();
+            
+            // 主要野菜のみ表示（グラフが見やすくなるよう）　←全部表示に変えてみる
+            const mainVegetables = vegetables; // 最初の8種類のみ
+            
+            // datasets配列を動的生成
+            const datasets = mainVegetables.map((vegetableName, index) => {
+                const vegetableData = groupedData[vegetableName];
+                
+                // 各日付の価格データを取得（データがない日はnull）
+                const priceData = allDates.map(date => {
+                    const found = vegetableData.find(item => item.date === date);
+                    return found ? found.price : null;
+                });
+                
+                return {
+                    label: vegetableName,
+                    data: priceData,
+                    borderColor: colors[index % colors.length],
+                    backgroundColor: colors[index % colors.length] + '20', // 透明度を追加
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.1, // 線の滑らかさ
+                    spanGaps: true // データがない部分も線で繋ぐ
+                };
             });
             
-            return {
-                label: vegetableName,
-                data: priceData,
-                borderColor: colors[index % colors.length],
-                backgroundColor: colors[index % colors.length] + '20', // 透明度を追加
-                borderWidth: 2,
-                fill: false,
-                tension: 0.1, // 線の滑らかさ
-                spanGaps: true // データがない部分も線で繋ぐ
-            };
-        });
-        
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: allDates, // X軸：日付
-                datasets: datasets // Y軸：各野菜の価格データ
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: '沖縄県青果市況価格推移（過去30日間）'
-                    },
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: allDates, // X軸：日付
+                    datasets: datasets // Y軸：各野菜の価格データ
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
+                options: {
+                    responsive: true,
+                    plugins: {
                         title: {
                             display: true,
-                            text: '価格（円/kg）'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: '日付'
+                            text: '沖縄県青果市況価格推移（過去30日間）'
                         },
-                        type: 'category'
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '価格（円/kg）'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '日付'
+                            },
+                            type: 'category'
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index'
                 }
-            }
-        });
-    }
-
-    // エラー時のフォールバック（従来の棒グラフ）
-    async function fallbackToBarChart() {
-        try {
-            const response = await fetch('https://fresh-shimayasai-api.onrender.com/api/vegetables');
-            const result = await response.json();
-            
-            if (result.status === 'success') {
-                createBarChart(result.data);
-            }
-        } catch (error) {
-            console.error('フォールバックもエラー:', error);
+            });
         }
-    }
 
-    // 従来の棒グラフ（フォールバック用）
-    function createBarChart(data) {
-        const ctx = document.getElementById('vegetableChart').getContext('2d');
-        
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: data.map(item => item.name),
-                datasets: [{
-                    label: '価格（円/kg）',
-                    data: data.map(item => item.price),
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
+        // エラー時のフォールバック（従来の棒グラフ）
+        async function fallbackToBarChart() {
+            try {
+                const response = await fetch('https://fresh-shimayasai-api.onrender.com/api/vegetables');
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    createBarChart(result.data);
+                }
+            } catch (error) {
+                console.error('フォールバックもエラー:', error);
+            }
+        }
+
+        // 従来の棒グラフ（フォールバック用）
+        function createBarChart(data) {
+            const ctx = document.getElementById('vegetableChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(item => item.name),
+                    datasets: [{
+                        label: '価格（円/kg）',
+                        data: data.map(item => item.price),
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '価格（円/kg）'
+                            }
+                        }
+                    },
+                    plugins: {
                         title: {
                             display: true,
-                            text: '価格（円/kg）'
+                            text: '沖縄県青果市況価格（最新）'
                         }
                     }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: '沖縄県青果市況価格（最新）'
-                    }
                 }
-            }
-        });
-    }
+            });
+        }
 
-    // ページ読み込み後にAPI呼び出し
-    document.addEventListener('DOMContentLoaded', function() {
-        fetchAndCreateChart();
-    });
+        // ページ読み込み後にAPI呼び出し
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchAndCreateChart();
+        });
     </script>
 </body>
 </html>
