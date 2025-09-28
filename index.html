@@ -270,6 +270,7 @@
         let allDates = [];
         let availableVegetables = [];
         let vegetablePrices = {}; // 野菜の最新価格を保存
+        let isDataReady = false; // データ準備完了フラグ
         
         // カラーパレット
         const colors = [
@@ -345,7 +346,7 @@
             }
         }
 
-        // チェックボックスを生成
+        // チェックボックスを生成（データ準備完了を待つ）
         function createCheckboxes(vegetables) {
             const container = document.getElementById('vegetableCheckboxes');
             container.innerHTML = '';
@@ -359,7 +360,8 @@
                 checkbox.type = 'checkbox';
                 checkbox.id = `veg_${index}`;
                 checkbox.value = vegetable;
-                checkbox.checked = true; // デフォルトで全選択
+                // データ準備完了後に全選択に設定（初期は未選択）
+                checkbox.checked = false;
                 checkbox.addEventListener('change', updateChart);
                 
                 const label = document.createElement('label');
@@ -522,9 +524,14 @@
                 if (result.status === 'success') {
                     allVegetableData = result.data;
                     allDates = result.dates;
+                    isDataReady = true; // データ準備完了フラグを設定
                     console.log('データ取得完了！');
                     
-                    // 全選択状態でグラフを更新
+                    // データ準備完了後に全てのチェックボックスを選択状態にする
+                    const checkboxes = document.querySelectorAll('#vegetableCheckboxes input[type="checkbox"]');
+                    checkboxes.forEach(cb => cb.checked = true);
+                    
+                    // 初回グラフ描画
                     updateChart();
                     
                 } else {
@@ -540,6 +547,12 @@
 
         // 選択された野菜でグラフを更新
         function updateChart() {
+            // データが準備できていない場合は処理を中断
+            if (!isDataReady) {
+                console.log('データがまだ準備できていません。処理を中断します。');
+                return;
+            }
+            
             const checkboxes = document.querySelectorAll('#vegetableCheckboxes input[type="checkbox"]:checked');
             const selectedVegetables = Array.from(checkboxes).map(cb => cb.value);
             
