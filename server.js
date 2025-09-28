@@ -277,8 +277,37 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
     console.log('Supabase URL:', supabaseUrl ? 'Set' : 'Not set');
     console.log('野菜価格自動更新システムが起動しました');
-    console.log('毎日午前12時に自動実行されます');
+    console.log('毎日12時に自動実行されます');
     console.log('手動実行: GET /api/update-vegetables');
+});
+
+// 野菜名一覧を取得するAPIエンドポイントを追加
+app.get('/api/vegetables-list', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('vege_data')
+            .select('name')
+            .order('name');
+        
+        if (error) throw error;
+        
+        // 重複を除去してユニークな野菜名のリストを作成
+        const uniqueVegetables = [...new Set(data.map(item => item.name))].sort();
+        
+        res.json({
+            status: 'success',
+            data: uniqueVegetables,
+            count: uniqueVegetables.length
+        });
+        
+    } catch (error) {
+        console.error('Database error:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Failed to fetch vegetables list',
+            error: error.message
+        });
+    }
 });
 
 app.get('/api/vegetables-history', async (req, res) => {
