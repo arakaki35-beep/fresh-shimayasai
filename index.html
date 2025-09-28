@@ -13,6 +13,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     
     <style>
+        header{
+            background-color: #4fc718;
+            color: white;
+        }
+
+        body{
+            background-color: #d7ffd3;
+        }
+
         .vegetable-selector {
             background-color: #f8f9fa;
             border: 1px solid #dee2e6;
@@ -176,11 +185,15 @@
                 text-align: center;
             }
         }
+        footer{
+            background-color: #0c56c5;
+            color:white;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>沖縄県　中央卸売市場　野菜市況</h1>
+        <h1>沖縄県 野菜市況チャート（7日間）</h1>
     </header>
     
     <div class="container-fluid px-3">
@@ -241,15 +254,13 @@
             <canvas id="vegetableChart"></canvas>
         </div>
         
-        <p class="mt-3">引用：<span><a href="https://www.pref.okinawa.lg.jp/shigoto/shinkooroshi/1011552/1024140/1024142.html">沖縄県</a></span>
-            <br>●月●日の情報</p>
+        <p class="mt-3">出展：<span><a href="https://www.pref.okinawa.lg.jp/shigoto/shinkooroshi/1011552/1024140/1024142.html">沖縄県|市況情報（中央卸売市場）</a></span></p>
+        <p>1kg辺りの価格を表示しています<br>弊社では情報の精度を保証できかねます。あくまで参考情報としてご利用ください。</p>
     </div>
     
     <footer class="mt-5">
-        <ul>
-            <li>お問い合わせ</li>
-            <li>会社情報</li>
-        </ul>
+        <p>制作：砂川商店合同会社</p>
+        <p>TEL：098-850-5735</p>
     </footer>
     
     <script>
